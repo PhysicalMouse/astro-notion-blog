@@ -1,7 +1,6 @@
 ---
 import * as interfaces from '../../lib/interfaces.ts'
 import {
-  getAllPosts,
   getPostBySlug,
   getPostsByTag,
   getBlock,
@@ -19,7 +18,6 @@ import PostDate from '../../components/PostDate.astro'
 import PostTags from '../../components/PostTags.astro'
 import PostTitle from '../../components/PostTitle.astro'
 import PostBody from '../../components/PostBody.astro'
-import PostRelativeLink from '../../components/PostRelativeLink.astro'
 import BlogPostsLink from '../../components/BlogPostsLink.astro'
 import BlogTagsLink from '../../components/BlogTagsLink.astro'
 import styles from '../../styles/blog.module.css'
@@ -36,10 +34,9 @@ if (!post) {
   throw new Error(`Post not found. slug: ${slug}`)
 }
 
-const [blocks, allPosts, tags, postsHavingSameTag] =
+const [blocks, tags, postsHavingSameTag] =
   await Promise.all([
     getAllBlocksByBlockId(post.PageId),
-    getAllPosts(),
     getAllTags(),
     getPostsByTag(post.Tags[0]?.name, 6),
   ])
@@ -79,10 +76,6 @@ await Promise.all(
     .map((promise) => promise.then(downloadFile))
 )
 
-const currentPostIndex = allPosts.findIndex((post) => post.Slug === slug)
-const prevPost = allPosts[currentPostIndex + 1]
-const nextPost = allPosts[currentPostIndex - 1]
-
 let ogImage = ''
 if (post.FeaturedImage && post.FeaturedImage.Url) {
   ogImage = new URL(filePath(new URL(post.FeaturedImage.Url)), Astro.site)
@@ -112,10 +105,6 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
         crossorigin="anonymous"
         async
       ></script>
-
-      <footer>
-        <PostRelativeLink prevPost={prevPost} nextPost={nextPost} />
-      </footer>
     </div>
   </div>
 
