@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
 import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
@@ -37,6 +38,7 @@ export default defineConfig({
   site: getSite(),
   base: BASE_PATH,
   integrations: [
+    sitemap(),
     icon(),
     CoverImageDownloader(),
     CustomIconDownloader(),
