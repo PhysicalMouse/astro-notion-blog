@@ -103,6 +103,16 @@ if (post.FeaturedImage && post.FeaturedImage.Url) {
       <PostBody blocks={blocks} />
       <PostTags post={post} />
 
+      <div id="comments" class={styles.comments}></div>
+      <script
+        src="https://utteranc.es/client.js"
+        repo={import.meta.env.UTTERANCES || 'PhysicalMouse/CloudflareBlogComment'}
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async
+      ></script>
+
       <footer>
         <PostRelativeLink prevPost={prevPost} nextPost={nextPost} />
       </footer>
