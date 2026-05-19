@@ -3,6 +3,8 @@ export const NOTION_API_SECRET =
 export const DATABASE_ID =
   import.meta.env.DATABASE_ID || process.env.DATABASE_ID || ''
 
+export const SITE_DOMAIN =
+  import.meta.env.SITE_DOMAIN || process.env.SITE_DOMAIN || '' // <- Set your site domain. e.g. blog.example.com
 export const CUSTOM_DOMAIN =
   import.meta.env.CUSTOM_DOMAIN || process.env.CUSTOM_DOMAIN || '' // <- Set your costom domain if you have. e.g. alpacat.com
 export const BASE_PATH =

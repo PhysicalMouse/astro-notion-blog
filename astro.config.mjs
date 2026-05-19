@@ -1,13 +1,17 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 import icon from 'astro-icon';
-import { CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
+import { SITE_DOMAIN, CUSTOM_DOMAIN, BASE_PATH } from './src/server-constants';
 import CoverImageDownloader from './src/integrations/cover-image-downloader';
 import CustomIconDownloader from './src/integrations/custom-icon-downloader';
 import FeaturedImageDownloader from './src/integrations/featured-image-downloader';
 import PublicNotionCopier from './src/integrations/public-notion-copier';
 
 const getSite = function () {
+  if (SITE_DOMAIN) {
+    return new URL(BASE_PATH, `https://${SITE_DOMAIN}`).toString();
+  }
+
   if (CUSTOM_DOMAIN) {
     return new URL(BASE_PATH, `https://${CUSTOM_DOMAIN}`).toString();
   }
