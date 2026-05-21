@@ -145,10 +145,35 @@ export async function getAllPosts(): Promise<Post[]> {
     params['start_cursor'] = res.next_cursor as string
   }
 
-  postsCache = results
+  const builtPosts = results
     .filter((pageObject) => _validPageObject(pageObject))
     .map((pageObject) => _buildPost(pageObject))
+  postsCache = _sortPostsByRankAndDate(builtPosts)
   return postsCache
+}
+
+function _sortPostsByRankAndDate(posts: Post[]): Post[] {
+  return posts
+    .map((post, index) => ({ post, originalIndex: index }))
+    .sort((a, b) => {
+      // 未填写 Rank 或 Rank <= 0 的项放在后面
+      const rankA = a.post.Rank > 0 ? a.post.Rank : Number.MAX_SAFE_INTEGER
+      const rankB = b.post.Rank > 0 ? b.post.Rank : Number.MAX_SAFE_INTEGER
+      if (rankA !== rankB) {
+        return rankA - rankB
+      }
+
+      // Rank 相同或都未填写时，按发布时间倒序
+      const dateA = Date.parse(a.post.Date) || 0
+      const dateB = Date.parse(b.post.Date) || 0
+      if (dateA !== dateB) {
+        return dateB - dateA
+      }
+
+      // 再次相同则保持原始查询顺序
+      return a.originalIndex - b.originalIndex
+    })
+    .map(({ post }) => post)
 }
 
 export async function getPosts(pageSize = 10): Promise<Post[]> {
@@ -158,17 +183,10 @@ export async function getPosts(pageSize = 10): Promise<Post[]> {
 
 export async function getRankedPosts(pageSize = 10): Promise<Post[]> {
   const allPosts = await getAllPosts()
-  return allPosts
-    .filter((post) => !!post.Rank)
-    .sort((a, b) => {
-      if (a.Rank > b.Rank) {
-        return -1
-      } else if (a.Rank === b.Rank) {
-        return 0
-      }
-      return 1
-    })
-    .slice(0, pageSize)
+  return _sortPostsByRankAndDate(allPosts.filter((post) => post.Rank > 0)).slice(
+    0,
+    pageSize
+  )
 }
 
 export async function getPostBySlug(slug: string): Promise<Post | null> {
